@@ -2,6 +2,7 @@
 using cloudscribe.Core.Storage.EFCore.Common;
 using cloudscribe.Core.Storage.EFCore.MySql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 
@@ -15,20 +16,20 @@ namespace Microsoft.Extensions.DependencyInjection
             bool useSingletonLifetime = false,
             int maxConnectionRetryCount = 0,
             int maxConnectionRetryDelaySeconds = 30,
-            ICollection<int> transientSqlErrorNumbersToAdd = null
+            ICollection<int> transientSqlErrorNumbersToAdd = null,
+            MySqlDbContextOptionsBuilder mySqlOptions = null
             )
         {
             services.AddCloudscribeCoreEFCommon(useSingletonLifetime);
-
-            //services.AddEntityFrameworkMySql()
-            //    .AddDbContext<CoreDbContext>(options =>
-            //        options.UseMySql(connectionString));
 
             services.AddEntityFrameworkMySql()
                 .AddDbContext<CoreDbContext>(options =>
                     options.UseMySql(connectionString,
                     mySqlOptionsAction: sqlOptions =>
                     {
+                        if (mySqlOptions != null)
+                            sqlOptions = mySqlOptions;
+
                         if (maxConnectionRetryCount > 0)
                         {
                             //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
