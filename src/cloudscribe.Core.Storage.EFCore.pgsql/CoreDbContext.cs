@@ -263,11 +263,15 @@ namespace cloudscribe.Core.Storage.EFCore.pgsql
 
                 entity.HasIndex(p => p.NormalizedEmail);
 
+                entity.HasIndex(p => new { p.NormalizedEmail, p.SiteId}).IsUnique();
+
                 entity.Property(p => p.UserName).IsRequired().HasMaxLength(50);
 
                 entity.Property(p => p.NormalizedUserName).IsRequired().HasMaxLength(50);
 
                 entity.HasIndex(p => p.NormalizedUserName);
+
+                entity.HasIndex(p => new { p.NormalizedUserName, p.SiteId}).IsUnique();
 
                 entity.Property(p => p.DisplayName).IsRequired().HasMaxLength(100);
 
