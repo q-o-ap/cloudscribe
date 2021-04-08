@@ -134,8 +134,12 @@ namespace cloudscribe.Core.Identity
             //https://github.com/IdentityServer/IdentityServer4.AspNetIdentity/blob/dev/src/IdentityServer4.AspNetIdentity/IdentityServerBuilderExtensions.cs
             // we need to disable to allow iframe for authorize requests
             // but only if secure - browsers block SameSite=None if not Secure
-            var sslIsAvailable = _configuration.GetValue<bool>("AppSettings:UseSsl");
-            if (sslIsAvailable) { 
+            
+            // don't use this, because it's inaccurate for a proxy scenario...
+            // var sslIsAvailable = _configuration.GetValue<bool>("AppSettings:UseSsl");
+
+            var requestScheme = _httpContextAccessor?.HttpContext?.Request?.Scheme ?? ""; 
+            if (requestScheme == "https") { 
                 options.Cookie.SameSite = SameSiteMode.None;
             }
 
